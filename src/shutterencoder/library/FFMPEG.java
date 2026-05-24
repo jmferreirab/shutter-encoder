@@ -97,15 +97,13 @@ public static String PathToFFMPEG = Shutter.class.getProtectionDomain().getCodeS
 public static int fileLength = 0; 
 public static boolean error = false;
 public static boolean isRunning = false;
-public static volatile BufferedWriter writer;
+public static BufferedWriter writer;
 public static Thread runProcess = new Thread();
 private static Thread displayThread;
 public static Process process;
 private static Process processAudio;
 public static Process waveformProcess;
-public static volatile BufferedWriter waveformWriter;
-private static final Object writerLock = new Object();
-private static final Object waveformWriterLock = new Object();
+public static BufferedWriter waveformWriter;
 private static InputStream audio = null;	
 private static AudioInputStream audioInputStream = null;
 private static SourceDataLine line = null;
@@ -158,40 +156,6 @@ private static int fps = 0;
 
 private static StringBuilder getAll;
 public static StringBuilder errorLog = new StringBuilder();
-
-	/**
-	 * Close shared writer safely.
-	 */
-	public static void closeWriter() {
-		synchronized (writerLock) {
-			if (writer != null) {
-				try {
-					writer.close();
-				} catch (IOException e) {
-					// best-effort close
-				} finally {
-					writer = null;
-				}
-			}
-		}
-	}
-
-	/**
-	 * Close shared waveform writer safely.
-	 */
-	public static void closeWaveformWriter() {
-		synchronized (waveformWriterLock) {
-			if (waveformWriter != null) {
-				try {
-					waveformWriter.close();
-				} catch (IOException e) {
-					// best-effort close
-				} finally {
-					waveformWriter = null;
-				}
-			}
-		}
-	}
 
 	public static void getFFmpegPath() {
 		
