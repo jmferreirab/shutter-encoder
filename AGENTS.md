@@ -1,5 +1,7 @@
 # Build Validation Rules
 
+Do not run validations. The user will run them. But if you do...
+
 After modifying Java code:
 - Prefer running `./gradlew classes testClasses`
 - Avoid `./gradlew build` unless explicitly requested
