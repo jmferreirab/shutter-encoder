@@ -1,0 +1,24 @@
+{
+    "java.project.referencedLibraries": [
+        "/workspaces/shutter-encoder/src/libs/javax.mail.jar",
+        "/workspaces/shutter-encoder/src/libs/slf4j-simple-1.7.9.jar",
+        "/workspaces/shutter-encoder/src/libs/pdfbox-app-2.0.28.jar",
+        "/workspaces/shutter-encoder/src/libs/json-20250517.jar",
+        "/workspaces/shutter-encoder/src/libs/commons-net-3.5.jar",
+        "/workspaces/shutter-encoder/src/libs/flatlaf-3.7.1.jar",
+        "/workspaces/shutter-encoder/src/libs/jnativehook-2.2.1.jar",
+        "/workspaces/shutter-encoder/src/libs/slf4j-api-1.7.9.jar",
+        "/workspaces/shutter-encoder/test-lib/hamcrest-core-1.3.jar",
+        "/workspaces/shutter-encoder/src/libs/commons-io-2.5.jar",
+        "/workspaces/shutter-encoder/src/libs/jgoodies-forms-1.8.0.jar",
+        "/workspaces/shutter-encoder/src/libs/jsvg-2.0.0.jar",
+        "/workspaces/shutter-encoder/src/libs/activation.jar",
+        "/workspaces/shutter-encoder/src/libs/jsoup-1.9.1.jar",
+        "/workspaces/shutter-encoder/test-lib/junit-4.13.2.jar",
+        "/workspaces/shutter-encoder/src/libs/jgoodies-common-1.8.0.jar",
+        "/workspaces/shutter-encoder/src/libs/flatlaf-extras-3.7.1.jar"
+    ],
+    "java.project.sourcePaths": [
+        "src"
+    ]
+}

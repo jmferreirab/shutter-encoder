@@ -1,9 +1,10 @@
-package shutterencoder.library;
+package test.java.shutterencoder.library;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.util.Arrays;
+import shutterencoder.library.ProcessUtils;
 
 public class ProcessUtilsTest {
 
