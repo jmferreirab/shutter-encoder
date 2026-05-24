@@ -1,10 +1,9 @@
-package test.java.shutterencoder.library;
+package shutterencoder.library;
 
-import org.junit.Test;
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.Arrays;
-import shutterencoder.library.ProcessUtils;
 
 public class ProcessUtilsTest {
 
@@ -14,9 +13,11 @@ public class ProcessUtilsTest {
         assertTrue(out.contains("hello"));
     }
 
-    @Test(expected = java.util.concurrent.TimeoutException.class)
+    @Test
     public void testTimeout() throws Exception {
-        // sleep longer than timeout to trigger TimeoutException
-        ProcessUtils.runAndCapture(Arrays.asList("sh", "-c", "sleep 5; echo done"), 1);
+        assertThrows(java.util.concurrent.TimeoutException.class, () -> {
+            // sleep longer than timeout to trigger TimeoutException
+            ProcessUtils.runAndCapture(Arrays.asList("sh", "-c", "sleep 5; echo done"), 1);
+        });
     }
 }

@@ -6,15 +6,14 @@
 	"image": "mcr.microsoft.com/devcontainers/java:3-25-trixie",
 
 	"features": {
-		"ghcr.io/devcontainers/features/java:1": {
-			"version": "none",
-			"installMaven": "false",
-			"installGradle": "false"
-		},
 		"ghcr.io/devcontainers/features/python:1": {
 			"installTools": true,
 			"version": "os-provided"
 		}
+	},
+
+	"containerEnv": {
+		"JAVA_HOME": "/usr/lib/jvm/msopenjdk-current"
 	}
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.

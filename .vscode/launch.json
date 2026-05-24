@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Shutter",
+            "request": "launch",
+            "mainClass": "shutterencoder.ui.main.Shutter",
+            "projectName": "shutter-encoder_c004bd1a"
+        },
+        {
+            "type": "java",
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}"

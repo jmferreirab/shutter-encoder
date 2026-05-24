@@ -16,6 +16,30 @@ The application supports **batch processing**, **presets**, and **lossless opera
 
 ---
 
+## ⚙️ Gradle build (local development)
+
+This repository includes a `build.gradle` and `settings.gradle` so you can build, test and run the project with Gradle.
+
+Recommended workflow:
+
+```bash
+# If you have Gradle installed, generate the wrapper (recommended):
+gradle wrapper
+
+# Build and run using the wrapper after it's created:
+./gradlew build
+./gradlew run
+
+# Run tests:
+./gradlew test
+```
+
+Notes:
+- The project uses a non-standard source layout: Java sources are under `src/` and resources are under `src/resources/`.
+- Local third-party jars are loaded from `src/libs/` by the Gradle build using `fileTree`.
+- Tests use JUnit 5 and are configured to run via the Gradle `test` task.
+
+
 ## ✨ Features
 
 ### 🎞️ Media Encoding and Conversion
