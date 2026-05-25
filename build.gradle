@@ -16,10 +16,38 @@ repositories {
 }
 
 dependencies {
-    implementation fileTree(dir: 'src/libs', include: ['*.jar'])
-	testImplementation(platform('org.junit:junit-bom:5.9.3'))
-	testImplementation('org.junit.jupiter:junit-jupiter')
+	testImplementation platform('org.junit:junit-bom:5.9.3')
+	testImplementation 'org.junit.jupiter:junit-jupiter'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher' 
+
+    // UI and Look & Feel
+    implementation 'com.formdev:flatlaf:3.7.1'
+    implementation 'com.formdev:flatlaf-extras:3.7.1'
+
+    // Not used
+    // implementation 'com.jgoodies:jgoodies-common:1.8.0'
+    // implementation 'com.jgoodies:jgoodies-forms:1.8.0'
+
+    // Transient from flatlaf-extras
+    // implementation 'com.github.weisj:jsvg:2.0.0'
+
+    // Utilities and Networking
+    // implementation 'commons-io:commons-io:2.22.0' // Old was 2.5.0
+    implementation 'commons-net:commons-net:3.13.0' // Old was 3.5.0
+    implementation 'org.json:json:20250517'
+    implementation 'org.jsoup:jsoup:1.22.2' // Old was 1.9.1
+    
+    // Mail & Activation
+    implementation 'javax.activation:activation:1.1.1'
+    implementation 'com.sun.mail:javax.mail:1.6.2'
+
+    // Logging - not used
+    // implementation 'org.slf4j:slf4j-api:1.7.36' // Old was 1.7.9
+    // implementation 'org.slf4j:slf4j-simple:1.7.36' // Old was 1.7.9
+
+    // PDF and System Hooks
+    implementation 'org.apache.pdfbox:pdfbox-app:2.0.36'
+    implementation 'com.github.kwhat:jnativehook:2.2.2'
 }
 
 application {
@@ -33,9 +61,8 @@ sourceSets {
             exclude 'test/**'
         }
         resources {
-            srcDirs = ['src']
-            include 'resources/**'
-        }
+            srcDirs = []
+        }        
     }
     test {
         java {
@@ -44,6 +71,14 @@ sourceSets {
     }
 }
 
+tasks.processResources {
+    // Copy everything under src/resources/**
+    // preserving the 'resources/' path inside the jar
+    from ('src') {
+        include 'resources/**'
+        into ''
+    }
+}
 
 test {
     useJUnitPlatform()
