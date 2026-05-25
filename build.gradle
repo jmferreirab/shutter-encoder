@@ -33,7 +33,8 @@ sourceSets {
             exclude 'test/**'
         }
         resources {
-            srcDirs = ['src/resources']
+            srcDirs = ['src']
+            include 'resources/**'
         }
     }
     test {
@@ -42,6 +43,7 @@ sourceSets {
         }
     }
 }
+
 
 test {
     useJUnitPlatform()

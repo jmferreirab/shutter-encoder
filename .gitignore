@@ -1,3 +1,4 @@
 JRE
 .gradle
 build
+bin

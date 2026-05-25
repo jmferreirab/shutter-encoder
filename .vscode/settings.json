@@ -20,12 +20,15 @@
         "src"
     ],
     "java.import.gradle.enabled": true,
-    "java.configuration.updateBuildConfiguration": "automatic",
+    // "java.configuration.updateBuildConfiguration": "automatic",
+    "java.autobuild.enabled": false,
+    "java.gradle.buildServer.enabled": "off",
     "java.import.gradle.java.home": "/usr/lib/jvm/msopenjdk-current",
-    "java.server.launchMode": "Standard",
+    "java.server.launchMode": "",
     "explorer.excludeGitIgnore": false,
     "files.exclude": {
         "**/.git": false
     },
     "java.project.explorer.showNonJavaResources": false,
+    "java.configuration.updateBuildConfiguration": "interactive",
 }

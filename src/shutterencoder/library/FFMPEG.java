@@ -247,25 +247,25 @@ public static StringBuilder errorLog = new StringBuilder();
 					
 					try {
 						
-						ProcessBuilder processFFMPEG;
-						
+						// Build a shell command and start via ProcessUtils so stderr is consumed safely
+						String shellCmd = null;
 						if (System.getProperty("os.name").contains("Windows"))
-						{														
+						{
 							if (cmd.contains("-f rawvideo") || cmd.contains("pipe:1") || cmd.contains("vidstabdetect") || cmd.contains("60000/1001") || cmd.contains("30000/1001") || cmd.contains("24000/1001")
 							|| caseEnableColorimetry.isSelected() && Colorimetry.setEQ(true) != ""
 							|| caseLUTs.isSelected() && grpColorimetry.isVisible()
 							|| caseForcerDAR.isSelected()
 							|| caseColormatrix.isSelected() && comboInColormatrix.getSelectedItem().toString().equals("HDR") && grpColorimetry.isVisible())
 							{
-								String pipe = "";								
+								String pipe = "";
 								if (cmd.contains("pipe:1"))
 								{
 									pipe =  " | " + '"' + PathToFFMPEG + '"' + " -strict " + Settings.comboStrict.getSelectedItem() + " -v quiet -i pipe:0 -an -c:v bmp -pix_fmt rgb24 -f image2pipe -";
 								}
-								
-								PathToFFMPEG = "Library\\ffmpeg.exe";
-								process = Runtime.getRuntime().exec(new String[]{"cmd.exe" , "/c",  PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", PathToFFMPEG) + pipe});
-								
+
+								String exe = "Library\\ffmpeg.exe";
+								shellCmd = exe + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", exe) + pipe;
+
 								//Back to default
 								if (Settings.btnCustomFFmpegPath.isSelected() && Settings.txtCustomFFmpegPath.getText().equals("") == false)
 								{
@@ -280,21 +280,50 @@ public static StringBuilder errorLog = new StringBuilder();
 							}
 							else //Allow to suspend FFmpeg process
 							{
-								processFFMPEG = new ProcessBuilder('"' + PathToFFMPEG + '"' + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", '"' + PathToFFMPEG + '"'));								
-								process = processFFMPEG.start();	
-							}					
+								shellCmd = '"' + PathToFFMPEG + '"' + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", '"' + PathToFFMPEG + '"');                                
+							}
 						}
 						else
-						{							
-							String pipe = "";								
+						{
+							String pipe = "";
 							if (cmd.contains("pipe:1"))
 							{
 								pipe =  " | " + PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -v quiet -i pipe:0 -an -c:v bmp -pix_fmt rgb24 -f image2pipe -";
 							}
-							
-							processFFMPEG = new ProcessBuilder("/bin/bash", "-c" , PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", PathToFFMPEG) + pipe);							
-							process = processFFMPEG.start();
-						}	
+							shellCmd = PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner -threads " + Settings.txtThreads.getText() + " " + cmd.replace("PathToFFMPEG", PathToFFMPEG) + pipe;
+						}
+
+						ProcessUtils.ProcessWrapper pw = null;
+						try {
+							final StringBuilder localGetAll = getAll;
+							pw = ProcessUtils.startShellCommand(shellCmd, null, (String l) -> {
+								localGetAll.append(l);
+								localGetAll.append(System.lineSeparator());
+								Console.consoleFFMPEG.append(l + System.lineSeparator());
+								checkForErrors(l);
+
+								if (cancelled == false)
+								{
+									if (RenderQueue.frame != null && RenderQueue.frame.isVisible() && RenderQueue.caseRunParallel.isSelected())
+									{
+										if (l.contains("All streams finished"))
+										{
+											RenderQueue.filesCompleted++;
+										}
+									}
+									else
+									{
+										if (cmd.contains("-pass 2"))    
+											setProgress(l, true, cmd);
+										else
+											setProgress(l, false, cmd);    
+									}
+								}
+							});
+							process = pw.process;
+						} catch (IOException ioe) {
+							throw ioe;
+						}
 
 						//IMPORTANT
 						if (cmd.contains("cropdetect") == false
@@ -406,27 +435,19 @@ public static StringBuilder errorLog = new StringBuilder();
 				
 				try {
 					
-					ProcessBuilder processFFMPEG;
-					
+					String shellCmd;
 					if (System.getProperty("os.name").contains("Windows"))
-					{														
-						processFFMPEG = new ProcessBuilder('"' + PathToFFMPEG + '"' + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner " + cmd);								
-						process = processFFMPEG.start();					
+					{
+						shellCmd = '"' + PathToFFMPEG + '"' + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner " + cmd;
 					}
 					else
-					{													
-						processFFMPEG = new ProcessBuilder("/bin/bash", "-c" , PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner " + cmd);							
-						process = processFFMPEG.start();
-					}	
-					
-					String line;
-					BufferedReader input = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-					
-					while ((line = input.readLine()) != null)
-					{			
-						checkForErrors(line);
-					}					
-					process.waitFor();
+					{
+						shellCmd = PathToFFMPEG + " -strict " + Settings.comboStrict.getSelectedItem() + " -hide_banner " + cmd;
+					}
+					ProcessUtils.ProcessWrapper pw = ProcessUtils.startShellCommand(shellCmd, null, (String l) -> { checkForErrors(l); });
+					if (pw != null) {
+						try { pw.waitForAndCleanup(); } catch (InterruptedException e) { Thread.currentThread().interrupt(); }
+					}
 									   					     																		
 				} catch (IOException io) {//Bug Linux							
 				} catch (Exception e) {
@@ -573,7 +594,7 @@ public static StringBuilder errorLog = new StringBuilder();
 					for (i = 0; i < FFPROBE.channels; i++) {
 						channels += "[0:a:" + i + "]showvolume=f=0.001:b=4:w=720:h=12[a" + i + "];";
 						audioOutput += "[a" + i + "]";
-					}
+						}
 					audioOutput = channels + audioOutput + "vstack=" + i + "[volume]" + '"' + " -map " + '"'
 							+ "[volume]" + '"';
 
