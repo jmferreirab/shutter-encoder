@@ -1,6 +1,7 @@
 plugins {
     id 'java'
     id 'application'
+    id 'com.gradleup.shadow' version '9.4.1'
 }
 
 group = 'paulpacifico.shutterencoder'
@@ -79,6 +80,46 @@ tasks.processResources {
         into ''
     }
 }
+
+// For IDE testing with Gradle, move Languages to expected location
+tasks.register('copyLanguages', Copy) {
+    // The source folder (relative to the project root)
+    from 'Languages'
+
+    // The destination folder
+    // 'layout.buildDirectory' is the modern, lazy-configuration way to reference the 'build' folder
+    into layout.buildDirectory.dir('classes/java/Languages')
+}
+
+// 2. Hook the custom task into the standard build lifecycle
+tasks.named('classes') {
+    dependsOn 'copyLanguages'
+}
+
+// Copies the folder next to your final JAR file
+tasks.register('copyLanguagesToLibs', Copy) {
+    from 'Languages'
+    into layout.buildDirectory.dir('libs/Languages')
+}
+
+// Add task to jar task
+tasks.named('jar') {
+    finalizedBy 'copyLanguagesToLibs'
+}
+
+
+// Set entrypoint for jar output
+jar {
+   manifest {
+       attributes(
+            // 'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+            'Main-Class': 'shutterencoder.ui.main.Shutter'
+       )
+   }
+
+}
+
+
 
 test {
     useJUnitPlatform()

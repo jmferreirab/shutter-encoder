@@ -2,3 +2,6 @@ JRE
 .gradle
 build
 bin
+.git
+.github
+.vscode
